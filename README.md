@@ -24,5 +24,6 @@ scripts/create_coreos_basebox.sh
 ## Usage
 
 ```
+vagrant init coreos-base --template $HOME/.vagrant.d/templates/Vagrantfile-coreos"
 vagrant up
 ```

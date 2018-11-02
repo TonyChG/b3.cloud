@@ -8,13 +8,14 @@ Vagrant.require_version ">= 1.6.0"
 # Make sure the vagrant-ignition plugin is installed
 required_plugins = %w(vagrant-ignition)
 
-$core_num_instances = 5
+$core_num_instances = 1
 $core_instance_name_prefix = "core"
 
 Vagrant.configure("2") do |config|
   # always use Vagrants insecure key
   config.ssh.insert_key = false
   config.ssh.forward_agent = true
+  config.ssh.username = "core"
 
   config.vm.box = "coreos-base"
 
@@ -29,6 +30,8 @@ Vagrant.configure("2") do |config|
           # This tells Ignition what the IP for eth1 (the host-only adapter) should be
           config.ignition.ip = ip
 
+          config.vm.provision "file", source: "user-data", destination: "/var/lib/coreos-vagrant/vagrantfile-user-data"
+
           config.vm.provider :virtualbox do |vb|
               config.ignition.hostname = vm_name
               config.ignition.drive_name = "config" + i.to_s
@@ -42,7 +45,6 @@ Vagrant.configure("2") do |config|
               end
               vb.customize ['storageattach', :id, '--storagectl', 'IDE Controller', '--port', 0, '--device', 1, '--type', 'hdd', '--medium', disk]
           end
-
       end
   end
 
