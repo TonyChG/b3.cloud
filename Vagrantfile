@@ -23,7 +23,7 @@ IGNITION_CONFIG_PATH = File.join(File.dirname(__FILE__), "config.ign")
 CONFIG = File.join(File.dirname(__FILE__), "config.rb")
 
 # Defaults for config options defined in CONFIG
-$num_instances = 1
+$num_instances = 5
 $update_channel = "alpha"
 $instance_name_prefix = "core"
 $enable_serial_logging = false
@@ -67,12 +67,6 @@ Vagrant.configure("2") do |config|
   config.vm.box = "coreos-#{$update_channel}"
   config.vm.box_url = "https://#{$update_channel}.release.core-os.net/amd64-usr/current/coreos_production_vagrant_virtualbox.json"
 
-  ["vmware_fusion", "vmware_workstation"].each do |vmware|
-    config.vm.provider vmware do |v, override|
-      override.vm.box_url = "https://#{$update_channel}.release.core-os.net/amd64-usr/current/coreos_production_vagrant_vmware_fusion.json"
-    end
-  end
-
   config.vm.provider :virtualbox do |v|
     # On VirtualBox, we don't have guest additions or a functional vboxsf
     # in CoreOS, so tell Vagrant that so it can be smarter.
@@ -94,7 +88,7 @@ Vagrant.configure("2") do |config|
       # Reconfigure daemon
       config.vm.provision "file", source: "../configs/docker/daemon.json", destination: "/tmp/daemon.json"
       config.vm.provision "shell" do |s|
-          s.inline = "cp /tmp/daemon.json /etc/docker/daemon.json"
+          s.inline = "mkdir -p /etc/docker && cp /tmp/daemon.json /etc/docker/daemon.json"
           s.privileged = true
       end
       # Mount lvm volume
@@ -126,9 +120,8 @@ Vagrant.configure("2") do |config|
         vb.customize ['storageattach', :id, '--storagectl', 'IDE Controller', '--port', 0, '--device', 1, '--type', 'hdd', '--medium', disk]
       end
 
-      ip = "172.17.8.#{i+100}"
-      config.vm.network "public_network", ip: "192.168.4.#{i+100}", bridge: "enp0s31f6"
-      config.vm.network :private_network, ip: ip
+      ip = "192.168.4.#{i+100}"
+      config.vm.network "public_network", ip: ip, bridge: "enp0s31f6"
       # This tells Ignition what the IP for eth1 (the host-only adapter) should be
       config.ignition.ip = ip
 
