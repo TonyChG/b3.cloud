@@ -9,3 +9,4 @@ venv/
 *.ova
 disks/*
 user-data
+coreos-vagrant

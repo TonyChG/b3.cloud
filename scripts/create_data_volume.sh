@@ -34,7 +34,6 @@ mkdir -p /$vg_name
 mount "/dev/mapper/$vg_name-$lv_name" "/$vg_name"
 
 rm -rf /data/*
-mv /var/lib/docker /data/docker
 chown -R core:core /data
 
 systemctl enable docker

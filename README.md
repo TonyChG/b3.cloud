@@ -1,6 +1,6 @@
 # TP1 - Cloud
 > Formateur: Léo GODEFROY
-> Groupe: Antoine CHINT - Benjamin GIRALT
+> Groupe: Antoine CHINY - Benjamin GIRALT
 
 ## Requirements
 - `git`
@@ -18,7 +18,8 @@ vagrant plugin install vagrant-ignition-0.0.3.gem
 ```
 # Clone this repo
 cd b3.cloud
-scripts/create_coreos_basebox.sh
+git clone https://github.com/coreos/coreos-vagrant
+cp Vagrantfile coreos-vagrant/Vagrantfile
 ```
 
 ## Usage
