@@ -8,7 +8,7 @@ Vagrant.require_version ">= 1.6.0"
 # Make sure the vagrant-ignition plugin is installed
 required_plugins = %w(vagrant-ignition)
 
-$core_num_instances = 1
+$core_num_instances = 5
 $core_instance_name_prefix = "core"
 
 Vagrant.configure("2") do |config|
@@ -26,15 +26,24 @@ Vagrant.configure("2") do |config|
 
           # Set ip
           ip = "192.168.4.#{i+100}"
-          config.vm.network :public_network, ip: ip, bridge: "enp0s31f6"
+          config.vm.network "public_network", ip: ip, bridge: "enp0s31f6"
+          # Required for nfs
+          config.vm.network "private_network", ip: "172.16.100.#{i+100}"
           # This tells Ignition what the IP for eth1 (the host-only adapter) should be
           config.ignition.ip = ip
 
-          # config.vm.provision "file", source: "user-data", destination: "/var/lib/coreos-vagrant/vagrantfile-user-data"
+          config.vm.provision "file", source: "configs/docker/daemon.json", destination: "/tmp/daemon.json"
+          config.vm.provision "shell" do |s|
+              s.inline = "cp /tmp/daemon.json /etc/docker/daemon.json"
+              s.privileged = true
+          end
+          config.vm.provision "volume", type: "shell", run: "once",
+              :path => "scripts/create_data_volume.sh"
 
           config.vm.provider :virtualbox do |vb|
               config.ignition.hostname = vm_name
               config.ignition.drive_name = "config" + i.to_s
+              # config.vm.synced_folder ".", "/data/vagrant", type: "nfs"
 
               # Second disk in GB
               $second_disksize = 10
