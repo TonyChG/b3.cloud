@@ -30,7 +30,7 @@ Vagrant.configure("2") do |config|
           # This tells Ignition what the IP for eth1 (the host-only adapter) should be
           config.ignition.ip = ip
 
-          config.vm.provision "file", source: "user-data", destination: "/var/lib/coreos-vagrant/vagrantfile-user-data"
+          # config.vm.provision "file", source: "user-data", destination: "/var/lib/coreos-vagrant/vagrantfile-user-data"
 
           config.vm.provider :virtualbox do |vb|
               config.ignition.hostname = vm_name
