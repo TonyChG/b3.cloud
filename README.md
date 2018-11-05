@@ -28,3 +28,7 @@ cp Vagrantfile coreos-vagrant/Vagrantfile
 vagrant init coreos-base --template $HOME/.vagrant.d/templates/Vagrantfile-coreos"
 vagrant up
 ```
+
+## TODO
+
+- Drain au niveau du manager

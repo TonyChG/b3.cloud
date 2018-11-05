@@ -92,8 +92,8 @@ Vagrant.configure("2") do |config|
           s.privileged = true
       end
       # Mount lvm volume
-      config.vm.provision "volume", type: "shell", run: "once",
-          :path => "../scripts/create_data_volume.sh"
+      # config.vm.provision "volume", type: "shell", run: "once",
+      #     :path => "../scripts/create_data_volume.sh"
 
       if $expose_docker_tcp
         config.vm.network "forwarded_port", guest: 2375, host: ($expose_docker_tcp + i - 1), host_ip: "127.0.0.1", auto_correct: true
@@ -111,7 +111,7 @@ Vagrant.configure("2") do |config|
         config.ignition.config_obj = vb
 
         # Second disk in GB
-        $second_disksize = 10
+        $second_disksize = 8
         disk = "../disks/data#{i}.vdi"
         if !File.exist?(disk)
             vb.customize ['createhd', '--filename', disk, '--size', 1024 * $second_disksize, '--variant', 'Fixed']
@@ -122,6 +122,7 @@ Vagrant.configure("2") do |config|
 
       ip = "192.168.4.#{i+100}"
       config.vm.network "public_network", ip: ip, bridge: "enp0s31f6"
+      # config.vm.network "private_network", ip: ip
       # This tells Ignition what the IP for eth1 (the host-only adapter) should be
       config.ignition.ip = ip
 
