@@ -33,6 +33,11 @@ hosts=(\
 '192.168.4.103' \
 '192.168.4.104' \
 '192.168.4.105' \
+'192.168.4.201' \
+'192.168.4.202' \
+'192.168.4.203' \
+'192.168.4.204' \
+'192.168.4.205' \
 )
 
 function fatal {
@@ -162,7 +167,7 @@ for h in "${hosts[@]}"; do
         -v /var/lib/ceph/:/var/lib/ceph/ \
         -v /etc/ceph:/etc/ceph \
         -e CEPHFS_CREATE=1 \
-        -e CEPHFS_DATA_POOL_PG=128 \
+        -e CEPHFS_DATA_POOL_PG=512 \
         -e CEPHFS_METADATA_POOL_PG=256 \
         ceph/daemon mds"
     echo "Start MDS on $h"
