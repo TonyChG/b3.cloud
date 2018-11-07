@@ -9,6 +9,7 @@
 # 11/05/18    tonychg
 # =============================================================================
 
+scripts_path="`dirname $(realpath $0)`"
 sshcmd=(ssh -q -i $HOME/.vagrant.d/insecure_private_key -o "StrictHostKeyChecking=no")
 
 hosts=(\
@@ -53,3 +54,10 @@ for i in "${hosts[@]}"; do
     ${sshcmd[@]} core@$i "$start_keepalived"
     priority=$((priority+1))
 done
+
+# ${sshcmd[@]} core@192.168.4.101 NETWORK_CIDR="192.168.4.1/24" MONITOR_IP="192.168.4.101" 'bash -s' < $scripts_path/ceph/mon.sh
+
+# for i in "${hosts[@]}"; do
+#     ${sshcmd[@]} core@$i "docker ps | grep -q 'ceph-osd' && docker rm -f ceph-osd"
+#     ${sshcmd[@]} core@$i PART_SIZE="8" 'bash -s' < $scripts_path/ceph/osd.sh
+# done
