@@ -34,10 +34,33 @@ cd coreos-vagrant
 vagrant up
 
 # To deploy swarm
-bash ../scripts/deploy.sh
+bash scripts/swarminit.sh
 
 # To deploy ceph
-bash ../scripts/deploy_ceph.sh
+vim scripts/ceph-config
+# After editing source the ceph config
+source scripts/ceph-config
+bash scripts/ceph.sh --help
+
+# Start with the ceph images
+bash scripts/ceph.sh --pull-images
+
+# Deploy ceph monitors
+bash scripts/ceph.sh --monitors
+
+# Deploy ceph managers
+bash scripts/ceph.sh --managers
+
+# Run ceph osd on all nodes
+bash scripts/ceph.sh --osd
+
+# Run ceph mds on all nodes
+bash scripts/ceph.sh --mds
+
+# Copy repository to core nodes
+ssh-add $HOME/.vagrant.d/insecure_private_key
+scp -q -o "StrictHostKeyChecking=no" data.tar.gz core@$MASTER:
+ssh -q -o "StrictHostKeyChecking=no" core@$MASTER "sudo tar xvfPz data.tar.gz -C /"
 ```
 
 ## TODO

@@ -1,63 +1,37 @@
 #!/bin/bash
 # =============================================================================
-# Name     : deploy_ceph.sh
+# Name     : ceph.sh
 # Function : Deploy on ceph on swarm cluster using ssh and docker
-# Usage    : ./deploy_ceph.sh [--revert]
-#            --pull-images
-#            --managers 
-#            --monitors 
-#            --osd 
-#            --mds 
-#            --configure 
+# Usage    : ./ceph.sh
+#            --remove       Remove ceph cluster
+#            --all          Deploy all ceph nodes
+#            --managers     Deploy the ceph master and managers
+#            --monitors     Deploy ceph monitors
+#            --osd          Deploy ceph osd
+#            --mds          Deploy ceph mds
+#            --pull-images  Download require images default: ceph/daemon
+#            --configure  Configure ceph cluster
+# Example  : HOSTS=(192.168.4.100) MANAGERS=(192.168.4.100) MONITORS=(192.168.4.100) 
+#            bash scripts/ceph.sh
 # vi       : set expandtab shiftwidth=4 softtabstop=4
 # =============================================================================
 # Date        Who      What
 # 11/04/18    tonychg  Created
+# 11/07/18    tonychg  Ceph roles refactorisation + Params for each ones
+#                      Environement variables for roles assignment
 # =============================================================================
 
 # Params
-REVERT_MODE=false
-MONITORS=false
-MANAGERS=false
-OSD=false
-MDS=false
-CONFIGURE=false
-PULL_IMAGES=false
+_REMOVE=false
+_DEPLOY_MONITORS=false
+_DEPLOY_MANAGERS=false
+_DEPLOY_OSD=false
+_DEPLOY_MDS=false
+_CONFIGURE=false
+_PULL_IMAGES=false
 
-# Ceph configs
-network_cidr="192.168.4.1/24"
-master="192.168.4.101"
-baseuser="core"
-part_size="8"
-ceph_image="ceph/daemon"
-ssh_privkey="$HOME/.vagrant.d/insecure_private_key"
 
-# Host by ceph entities
-managers=(\
-'192.168.4.101' \
-'192.168.4.102' \
-'192.168.4.103' \
-)
-
-monitors=(\
-'192.168.4.101' \
-'192.168.4.102' \
-'192.168.4.103' \
-)
-
-hosts=(\
-'192.168.4.101' \
-'192.168.4.102' \
-'192.168.4.103' \
-'192.168.4.104' \
-'192.168.4.105' \
-'192.168.4.201' \
-'192.168.4.202' \
-'192.168.4.203' \
-'192.168.4.204' \
-'192.168.4.205' \
-)
-
+# Fatal exit with error message
 function fatal {
     if [[ $? -ne 0 ]]; then
         >&2 echo -e "$1"
@@ -65,171 +39,219 @@ function fatal {
     fi
 }
 
+ssh_privkey="$HOME/.vagrant.d/insecure_private_key"
 # Wrap ssh commands
 sshcmd=(ssh -q -i $ssh_privkey -o "StrictHostKeyChecking=no")
 scpcmd=(scp -q -i $ssh_privkey -o "StrictHostKeyChecking=no")
 
 scripts_path="`dirname $(realpath $0)`"
+source $scripts_path/ceph-config
+
+function usage {
+echo -e "\
+###############################################################################
+#                             Deploy CEPH cluster                             #
+###############################################################################
+
+ ENV       : HOSTS     All ceph nodes              (ip|hostname)
+             MONITORS  Ceph monitors nodes         (ip|hostname)
+             MANAGERS  Ceph managers nodes         (ip|hostname)
+             More configs in ceph-config
+             > vim scripts/ceph.sh
+
+ Usage     : source ceph-config
+             ./ceph.sh
+
+             --remove|-r    Remove cluster
+             --all          Deploy all ceph nodes
+             --pull-images  Download require images
+                            default: ceph/daemon
+             --monitors     Deploy the ceph master and monitors
+             --managers     Deploy ceph managers
+             --osd          Deploy ceph osd
+             --mds          Deploy ceph mds
+             --configure    Configure ceph cluster 
+                            (To run after roles deployment)
+"
+}
+
+if [[ $# -eq 0 ]]; then
+    usage
+    exit 0
+fi
 
 while ! [[ -z $1 ]]; do
     LABEL=$(echo $1 | awk -F= '{print $1}')
     VALUE=$(echo $1 | awk -F= '{print $2}')
     case $LABEL in
-        --revert|-r)
-            REVERT_MODE=true ;;
+        --help|-h)
+            usage && exit 0       ;;
+        --remove|-r)
+            _REMOVE=true          ;;
         --configure)
-            CONFIGURE=true   ;;
+            _CONFIGURE=true       ;;
         --monitors)
-            MONITORS=true    ;;
+            _DEPLOY_MONITORS=true ;;
         --managers)
-            MANAGERS=true    ;;
+            _DEPLOY_MANAGERS=true ;;
         --mds)
-            MDS=true         ;;
+            _DEPLOY_MDS=true      ;;
         --osd)
-            OSD=true         ;;
+            _DEPLOY_OSD=true      ;;
         --pull-images)
-            PULL_IMAGES=true ;;
+            _PULL_IMAGES=true     ;;
         --all)
-            MONITORS=true
-            MANAGERS=true
-            MDS=true
-            OSD=true
+            _DEPLOY_MONITORS=true
+            _DEPLOY_MANAGERS=true
+            _DEPLOY_MDS=true
+            _DEPLOY_OSD=true
             ;;
         *)
-            fatal "Unknow options: %s" $LABEL
-            usage
+            >&2 usage
+            >&2 echo "Unknow options: %s" $LABEL
+            exit 1
             ;;
     esac
     shift
 done
 
 # Revert all operations
-if $REVERT_MODE ; then
-    echo "[[ REVERTING ]]"
-    for h in ${hosts[@]}; do
-        shared_disk=$(${sshcmd[@]} $baseuser@$h "lsblk | egrep $part_size\"G\" | awk '{print\$1}'")
-        ${sshcmd[@]} $baseuser@$h "sudo wipefs -af /dev/$shared_disk"
-        ${sshcmd[@]} $baseuser@$h "\
+if $_REMOVE ; then
+    echo "[[ REMOVING CEPH CLUSTER ]]"
+    for h in ${HOSTS[@]}; do
+        shared_disk=$(${sshcmd[@]} $BASEUSER@$h "lsblk | egrep $PART_SIZE\"G\" | awk '{print\$1}'")
+        ${sshcmd[@]} $BASEUSER@$h "sudo sgdisk -Z /dev/$shared_disk"
+        ${sshcmd[@]} $BASEUSER@$h "sudo sgdisk -g /dev/$shared_disk"
+        ${sshcmd[@]} $BASEUSER@$h "sudo partprobe /dev/$shared_disk"
+        ${sshcmd[@]} $BASEUSER@$h "\
             ! [[ -z \$(docker ps -aq) ]] && docker rm -f \$(docker ps -aq)"
-        ${sshcmd[@]} $baseuser@$h "\
+        ${sshcmd[@]} $BASEUSER@$h "\
             sudo rm -rfv ceph.tar.gz /var/lib/ceph /etc/ceph /etc/fstab"
+        ${sshcmd[@]} $BASEUSER@$h "sudo systemctl reboot -i"
     done
     exit 0
 fi
 
-if $PULL_IMAGES ; then
-    for h in ${hosts[@]}; do
-        ${sshcmd[@]} $baseuser@$h "docker pull $ceph_image"
+if $_PULL_IMAGES ; then
+    for h in ${HOSTS[@]}; do
+        echo "Pull image $CEPH_IMAGE on $h              "
+        ${sshcmd[@]} $BASEUSER@$h "docker pull $CEPH_IMAGE"
+        if [[ $? -ne 0 ]]; then
+            >&2 echo -e "\n ERROR Cannot download $CEPH_IMAGE"
+        else
+            echo "OK"
+        fi
     done
 fi
 
 # Start ceph master
-if $MONITORS ; then
-    echo "[[ CEPH MONITORS ]]"
+if $_DEPLOY_MONITORS ; then
+    echo "[[ DEPLOYING CEPH MONITORS ]]"
     # Start ceph master
-    ${sshcmd[@]} $baseuser@$master \
-        NETWORK_CIDR=$network_cidr \
-        MON_IP=$master \
+    ${sshcmd[@]} $BASEUSER@$MASTER \
+        NETWORK_CIDR=$NETWORK_CIDR \
+        MON_IP=$MASTER \
         "bash -s" < $scripts_path/ceph/mon.sh
     fatal "Fail to init ceph root manager"
 
     # Wait starting of the ceph master
     echo "Waiting start of the master ..." ; sleep 1
-    >/dev/null 2>&1 ${sshcmd[@]} $baseuser@$master "docker exec ceph-mon ceph status"
+    >/dev/null 2>&1 ${sshcmd[@]} $BASEUSER@$MASTER "docker exec ceph-mon ceph status"
+    [[ $? -ne 0 ]] && fatal "Cannot start master: docker logs ceph-mon"
 
     # Get ceph config from master
-    ${sshcmd[@]} $baseuser@$master "sudo tar cPfz ceph.tar.gz /etc/ceph"
-    ${scpcmd[@]} $baseuser@$master:ceph.tar.gz /tmp/ceph.tar.gz
+    ${sshcmd[@]} $BASEUSER@$MASTER "sudo tar cPfz ceph.tar.gz /etc/ceph"
+    ${scpcmd[@]} $BASEUSER@$MASTER:ceph.tar.gz /tmp/ceph.tar.gz
 
     # Copy ceph configs to all nodes except master
-    exclude_master=("${hosts[@]:1}")
+    exclude_master=("${HOSTS[@]:1}")
     for h in "${exclude_master[@]}"; do
-        ${scpcmd[@]} /tmp/ceph.tar.gz $baseuser@$h:ceph.tar.gz
-        ${sshcmd[@]} $baseuser@$h "sudo tar xPfz ceph.tar.gz -C /"
+        ${scpcmd[@]} /tmp/ceph.tar.gz $BASEUSER@$h:ceph.tar.gz
+        ${sshcmd[@]} $BASEUSER@$h "sudo tar xPfz ceph.tar.gz -C /"
         echo -e "Copy /etc/ceph to $h"
     done
 
     # # Add monitors without master
-    exclude_master=("${monitors[@]:1}")
+    exclude_master=("${MONITORS[@]:1}")
     for h in "${exclude_master[@]}"; do
         echo "Add $h to cluster as monitor"
-        ${sshcmd[@]} $baseuser@$h \
-            NETWORK_CIDR="$network_cidr" \
+        ${sshcmd[@]} $BASEUSER@$h \
+            NETWORK_CIDR="$NETWORK_CIDR" \
             MON_IP="$h" \
             'bash -s' < $scripts_path/ceph/mon.sh
     done
 fi
 
 
-if $MANAGERS ; then
-    echo "[[ CEPH MANAGERS ]]"
+if $_DEPLOY_MANAGERS ; then
+    echo "[[ DEPLOYING CEPH MANAGERS ]]"
     # Add managers
-    for h in "${managers[@]}"; do
+    for h in "${MANAGERS[@]}"; do
         echo "Add $h to cluster as manager"
-        ${sshcmd[@]} $baseuser@$h < $scripts_path/ceph/mgr.sh
+        ${sshcmd[@]} $BASEUSER@$h < $scripts_path/ceph/mgr.sh
     done
 fi
 
-if $OSD ; then
-    echo "[[ CEPH OSD ]]"
+if $_DEPLOY_OSD ; then
+    echo "[[ DEPLOYING CEPH OSD ]]"
     # Get ceph keyring
-    ${sshcmd[@]} $baseuser@$master "\
+    ${sshcmd[@]} $BASEUSER@$MASTER "\
     docker exec ceph-mon ceph auth get client.bootstrap-osd" > /tmp/ceph.keyring
 
     # Start ceph OSD on all nodes
-    for h in "${hosts[@]}"; do
-        ${scpcmd[@]} /tmp/ceph.keyring $baseuser@$h:ceph.keyring
-        ${sshcmd[@]} $baseuser@$h "\
+    for h in "${HOSTS[@]}"; do
+        ${scpcmd[@]} /tmp/ceph.keyring $BASEUSER@$h:ceph.keyring
+        ${sshcmd[@]} $BASEUSER@$h "\
             sudo mkdir -p /var/lib/ceph/bootstrap-osd && \
             sudo mv -v ceph.keyring /var/lib/ceph/bootstrap-osd/ceph.keyring"
         echo "Copy ceph.keyring to $h"
-        ${sshcmd[@]} $baseuser@$h \
-            PART_SIZE="$part_size" \
+        ${sshcmd[@]} $BASEUSER@$h \
+            PART_SIZE="$PART_SIZE" \
             'bash -s' < $scripts_path/ceph/osd.sh
         echo "Start OSD on $h"
     done
 fi
 
-if $MDS ; then
-    echo "[[ CEPH MDS ]]"
+if $_DEPLOY_MDS ; then
+    echo "[[ DEPLOYING CEPH MDS ]]"
     # Start ceph MDS on all nodes
-    for h in "${hosts[@]}"; do
-        ${sshcmd[@]} $baseuser@$h \
-            METADATA_POOL_PG=256 \
-            DATA_POOL_PG=512 \
+    for h in "${HOSTS[@]}"; do
+        ${sshcmd[@]} $BASEUSER@$h \
+            DATA_POOL_PG=$DATA_POOL_PG \
+            METADATA_POOL_PG=$METATA_POOL_PG \
             'bash -s' < $scripts_path/ceph/mds.sh
         echo "Start MDS on $h"
     done
 fi
 
-if $CONFIGURE ; then
+if $_CONFIGURE ; then
     echo "[[ CEPH configure ]]"
     # Configure ceph pool
-    ${sshcmd[@]} $baseuser@$master "docker exec \
+    ${sshcmd[@]} $BASEUSER@$MASTER "docker exec \
         ceph-mon ceph osd pool set cephfs_data size 2"
-    # ${sshcmd[@]} $baseuser@$master "docker exec \
+    # ${sshcmd[@]} $BASEUSER@$MASTER "docker exec \
     #     ceph-mon ceph osd pool set cephfs_metadata size 2"
-    ${sshcmd[@]} $baseuser@$master "docker exec \
+    ${sshcmd[@]} $BASEUSER@$MASTER "docker exec \
         ceph-mon ceph osd set nodeep-scrub"
 
     # Generate token volume token
     token=$(\
-        ${sshcmd[@]} $baseuser@$master "docker exec ceph-mon \
+        ${sshcmd[@]} $BASEUSER@$MASTER "docker exec ceph-mon \
 ceph auth get-or-create client.dockerswarm osd 'allow rw' mon 'allow r' mds 'allow' \
 | grep 'key' | sed -e 's#\tkey \= ##g'")
     echo "Generate new token for all nodes: $token"
 
     # Configure disks
-    manager_ips=$(echo -n "${managers[@]}" | sed -e 's# #,#g')
-    for h in "${hosts[@]}"; do
+    manager_ips=$(echo -n "${MANAGERS[@]}" | sed -e 's# #,#g')
+    for h in "${HOSTS[@]}"; do
         echo "Configure disk on $h"
-        ${sshcmd[@]} $baseuser@$h "sudo su -c \
+        ${sshcmd[@]} $BASEUSER@$h "sudo su -c \
     'echo -e \"$manager_ips:6789:/\t/data/\tceph\tname=dockerswarm,\
 secret=$token,noatime,_netdev 0 2\" > /etc/fstab'"
         echo "Push disk config to fstab"
-        ${sshcmd[@]} $baseuser@$h "sudo mkdir -p /data"
+        ${sshcmd[@]} $BASEUSER@$h "sudo mkdir -p /data"
         echo "Mounting ceph partition ..."
-        ${sshcmd[@]} $baseuser@$h "sudo mount -a"
+        ${sshcmd[@]} $BASEUSER@$h "sudo mount -a"
     done
 fi
 

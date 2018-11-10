@@ -1,0 +1,14 @@
+version: '3'
+services:
+  whoami:
+    image: containous/whoami # A container that exposes an API to show its IP address
+    labels:
+      - "traefik.frontend.rule=Host:whoami.b3.swarm"
+      - "traefik.enable=true"
+      - "traefik.port=80"
+    networks:
+      - traefik-net
+
+networks:
+  traefik-net:
+    external: true

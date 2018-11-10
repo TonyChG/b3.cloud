@@ -34,6 +34,8 @@ $vm_cpus = 1
 $vb_cpuexecutioncap = 100
 $shared_folders = {}
 $forwarded_ports = {}
+# Second disk in GB
+$second_disksize = 8
 
 # Attempt to apply the deprecated environment variable NUM_INSTANCES to
 # $num_instances while allowing config.rb to override it
@@ -110,8 +112,6 @@ Vagrant.configure("2") do |config|
         vb.customize ["modifyvm", :id, "--cpuexecutioncap", "#{$vb_cpuexecutioncap}"]
         config.ignition.config_obj = vb
 
-        # Second disk in GB
-        $second_disksize = 8
         disk = "../disks/data#{i}.vdi"
         if !File.exist?(disk)
             vb.customize ['createhd', '--filename', disk, '--size', 1024 * $second_disksize, '--variant', 'Fixed']
@@ -121,8 +121,8 @@ Vagrant.configure("2") do |config|
       end
 
       ip = "192.168.4.#{i+100}"
-      config.vm.network "public_network", ip: ip, bridge: "enp0s31f6"
-      # config.vm.network "private_network", ip: ip
+      # config.vm.network "public_network", ip: ip, bridge: "enp1s31f6"
+      config.vm.network "private_network", ip: ip
       # This tells Ignition what the IP for eth1 (the host-only adapter) should be
       config.ignition.ip = ip
 
