@@ -32,7 +32,7 @@ priority=200
 
 for i in "${hosts[@]}"; do
     start_keepalived="\
-        ! [[ -z $(docker ps | grep 'keepalived' ) ]] && docker rm -f keepalived ; \
+        docker rm -f keepalived ; \
         docker run -d --name keepalived --restart=always \
         --cap-add=NET_ADMIN --net=host \
         -e KEEPALIVED_VIRTUAL_IPS=192.168.4.100 \

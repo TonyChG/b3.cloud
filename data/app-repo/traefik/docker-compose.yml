@@ -1,28 +1,29 @@
-version: "3"
+version: '3'
 
 services:
   traefik:
     image: traefik
-    command: --web --docker --docker.swarmMode --docker.watch --docker.domain=b3.swarm --logLevel=DEBUG
     ports:
       - 80:80
       - 443:443
-      - 8080:8080
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-#      - /data/app-repo/traefik/traefik.toml:/traefik.toml:ro
+      - /data/app-repo/traefik/traefik.toml:/traefik.toml:ro
       - /data/app-data/certs:/certs
-    labels:
-      - "traefik.enable=false"
     networks:
-      - traefik-net
+      - backend
     deploy:
       mode: global
       placement:
         constraints: [node.role == manager]
       restart_policy:
         condition: on-failure
+      labels:
+        - "traefik.docker.network=backend"
+        - "traefik.enable=true"
+        - "traefik.basic.port=8080"
+        - "traefik.frontend.rule=Host:traefik.b3.swarm"
 
 networks:
-  traefik-net:
+  backend:
     external: true

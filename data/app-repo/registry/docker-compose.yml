@@ -6,12 +6,14 @@ services:
     volumes:
       - /data/app-data/registry:/var/lib/registry
     networks:
-      - traefik-net
+      - backend
     deploy:
       labels:
-        - "traefik.port=5000"
+        - "traefik.docker.network=backend"
+        - "traefik.enable=true"
+        - "traefik.basic.port=5000"
         - "traefik.frontend.rule=Host:registry.b3.swarm"
 
 networks:
-  traefik-net:
+  backend:
     external: true
