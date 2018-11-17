@@ -112,7 +112,12 @@ Un DFS est un système de fichiers distribués permettant de :
 Pour notre solution d'automatisation de déploiement CEPH : cf `/scripts/ceph.sh`
 
 ## Q4
-
+1 conteneur lancé sur l'hôte core-103
+```
+core@core-201 ~ $ docker service ps registry
+ID                  NAME                IMAGE               NODE                DESIRED STATE       CURRENT STATE            ERROR               PORTS
+o0vcw3ytpkgv        registry.1          registry:2          core-103            Running             Running 36 seconds ago      
+```
 
 ## Q5
 

@@ -1,0 +1,3 @@
+[submodule "data/app-repo/swarmprom"]
+	path = data/app-repo/swarmprom
+	url = https://github.com/stefanprodan/swarmprom
