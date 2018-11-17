@@ -13,7 +13,7 @@
 
 sshcmd=(ssh -q -i $HOME/.vagrant.d/insecure_private_key -o "StrictHostKeyChecking=no")
 scripts_path="`dirname $(realpath $0)`"
-source $scripts_path/hosts
+source $scripts_path/hosts.2_hosts
 
 UNICAST_PEERS="[$(echo "'${hosts[@]}'" | sed -e 's# #, #g')]"
 priority=200
