@@ -84,6 +84,8 @@ docker stack deploy -c /data/app-repo/registry/docker-compose.yml registry
 ```
 
 [![asciicast](https://asciinema.dotfile.eu/a/21.png)](https://asciinema.dotfile.eu/a/21)
+[![asciicast](https://asciinema.dotfile.eu/a/21.png)](https://asciinema.dotfile.eu/a/21?autoplay=1)
+
 
 ## TODO
 
