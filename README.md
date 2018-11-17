@@ -83,9 +83,7 @@ docker stack deploy -c /data/app-repo/traefik/docker-compose.yml traefik
 docker stack deploy -c /data/app-repo/registry/docker-compose.yml registry
 ```
 
-[![demo](https://asciinema.dotfile.eu/a/21)](https://asciinema.dotfile.eu/a/21?autoplay=1)
-
->>>>>>> 8ff3c5346bf0db983618ed0d05cc684355220324
+[![demo](https://asciinema.dotfile.eu/a/21?autoplay=1)](https://asciinema.dotfile.eu/a/21?autoplay=1)
 
 ## TODO
 
