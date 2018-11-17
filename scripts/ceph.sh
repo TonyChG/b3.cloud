@@ -45,7 +45,7 @@ sshcmd=(ssh -q -i $ssh_privkey -o "StrictHostKeyChecking=no")
 scpcmd=(scp -q -i $ssh_privkey -o "StrictHostKeyChecking=no")
 
 scripts_path="`dirname $(realpath $0)`"
-source $scripts_path/ceph-config
+source $scripts_path/hosts
 
 function usage {
 echo -e "\
@@ -56,10 +56,10 @@ echo -e "\
  ENV       : HOSTS     All ceph nodes              (ip|hostname)
              MONITORS  Ceph monitors nodes         (ip|hostname)
              MANAGERS  Ceph managers nodes         (ip|hostname)
-             More configs in ceph-config
+             More configs in hosts file
              > vim scripts/ceph.sh
 
- Usage     : source ceph-config
+ Usage     : source hosts
              ./ceph.sh
 
              --remove|-r    Remove cluster

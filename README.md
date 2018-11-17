@@ -29,38 +29,58 @@ vim coreos-vagrant/Vagrantfile
 ## Usage
 
 ```
+vim Vagrantfile
+# >>> Vagrantfile
+# 123       ip = "192.168.4.#{i+100}"
+# 124       # config.vm.network "public_network", ip: ip, bridge: "enp1s31f6"
+# 125       config.vm.network "private_network", ip: ip
+# 126       # This tells Ignition what the IP for eth1 (the host-only adapter) should be
+# 127       config.ignition.ip = ip
+
 # Starting vagrant machines
 cd coreos-vagrant
 vagrant up
 
-# To deploy swarm
-bash scripts/swarminit.sh
-
-# To deploy ceph
-vim scripts/ceph-config
-# After editing source the ceph config
-source scripts/ceph-config
+# To deploy ceph cluster
+vim scripts/hosts
+# After editing the ceph config file
+# Map ceph entities to the Vagrant provisioned machines
+source scripts/hosts
 bash scripts/ceph.sh --help
 
 # Start with the ceph images
 bash scripts/ceph.sh --pull-images
 
-# Deploy ceph monitors
+# Start ceph monitors
 bash scripts/ceph.sh --monitors
 
-# Deploy ceph managers
+# Start ceph managers
 bash scripts/ceph.sh --managers
 
-# Run ceph osd on all nodes
+# Start ceph osd on all nodes
 bash scripts/ceph.sh --osd
 
-# Run ceph mds on all nodes
+# Start ceph mds on all nodes
 bash scripts/ceph.sh --mds
 
+# Mount ceph partition
+bash scripts/ceph.sh --configure
+
+# To deploy swarm
+bash scripts/swarminit.sh
+
 # Copy repository to core nodes
+cd b3.cloud
 ssh-add $HOME/.vagrant.d/insecure_private_key
+tar cvfPz data.tar.gz data
+source scripts/hosts
 scp -q -o "StrictHostKeyChecking=no" data.tar.gz core@$MASTER:
 ssh -q -o "StrictHostKeyChecking=no" core@$MASTER "sudo tar xvfPz data.tar.gz -C /"
+
+vagrant ssh [master]
+docker network create backend -d overlay
+docker stack deploy -c /data/app-repo/traefik/docker-compose.yml traefik
+docker stack deploy -c /data/app-repo/registry/docker-compose.yml registry
 ```
 
 ## TODO
