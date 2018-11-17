@@ -5,6 +5,7 @@
 # Usage    : ./ceph.sh
 #            --remove       Remove ceph cluster
 #            --all          Deploy all ceph nodes
+#            --hosts <file> Hosts config file
 #            --managers     Deploy the ceph master and managers
 #            --monitors     Deploy ceph monitors
 #            --osd          Deploy ceph osd
@@ -56,8 +57,8 @@ echo -e "\
  ENV       : HOSTS     All ceph nodes              (ip|hostname)
              MONITORS  Ceph monitors nodes         (ip|hostname)
              MANAGERS  Ceph managers nodes         (ip|hostname)
-             More configs in hosts file
-             > vim scripts/ceph.sh
+             More configs in scripts/hosts file
+             > vim scripts/hosts
 
  Usage     : source hosts
              ./ceph.sh
@@ -66,11 +67,12 @@ echo -e "\
              --all          Deploy all ceph nodes
              --pull-images  Download require images
                             default: ceph/daemon
+             --hosts <file> Hosts config file
              --monitors     Deploy the ceph master and monitors
              --managers     Deploy ceph managers
              --osd          Deploy ceph osd
              --mds          Deploy ceph mds
-             --configure    Configure ceph cluster 
+             --configure    Configure ceph cluster
                             (To run after roles deployment)
 "
 }
@@ -88,6 +90,8 @@ while ! [[ -z $1 ]]; do
             usage && exit 0       ;;
         --remove|-r)
             _REMOVE=true          ;;
+        --hosts)
+            _HOSTS_PATH=$VALUE    ;;
         --configure)
             _CONFIGURE=true       ;;
         --monitors)
@@ -114,6 +118,10 @@ while ! [[ -z $1 ]]; do
     esac
     shift
 done
+
+if ! [[ -z $_HOSTS_PATH ]]; then
+    source $_HOSTS_PATH
+fi
 
 # Revert all operations
 if $_REMOVE ; then

@@ -19,11 +19,11 @@ hosts=(\
 '192.168.4.103' \
 '192.168.4.104' \
 '192.168.4.105' \
-# '192.168.4.201' \
-# '192.168.4.202' \
-# '192.168.4.203' \
-# '192.168.4.204' \
-# '192.168.4.205' \
+'192.168.4.201' \
+'192.168.4.202' \
+'192.168.4.203' \
+'192.168.4.204' \
+'192.168.4.205' \
 )
 
 mount_data="sudo mount -a"
@@ -47,6 +47,7 @@ mount_data="sudo mount -a"
 # ${sshcmd[@]} core@192.168.4.101 NETWORK_CIDR="192.168.4.1/24" MONITOR_IP="192.168.4.101" 'bash -s' < $scripts_path/ceph/mon.sh
 
 for i in "${hosts[@]}"; do
-    ${scpcmd[@]} data/ceph_daemon.tar.gz core@$i:
-    ${sshcmd[@]} core@$i 'docker load < ceph_daemon.tar.gz'
+    # ${scpcmd[@]} data/images/ceph_daemon.tar.gz core@$i:
+    ${sshcmd[@]} core@$i "sudo su -c 'docker load < /data/images/keepalived.tar.gz'"
+    # ${sshcmd[@]} core@$i "sudo sysctl -w vm.max_map_count=262144"
 done
