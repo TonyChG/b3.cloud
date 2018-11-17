@@ -122,6 +122,8 @@ o0vcw3ytpkgv        registry.1          registry:2          core-103            
 ```
 
 ## Q5
-
+L'argument `--publish` permet de publier des ports de services pour les rendre accessibles à tous les hôtes du swarm
 
 ## Q6
+Permet d'utiliser la stack network du Docker host
+
