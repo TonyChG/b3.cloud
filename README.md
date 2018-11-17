@@ -86,3 +86,35 @@ docker stack deploy -c /data/app-repo/registry/docker-compose.yml registry
 ## TODO
 
 - Drain au niveau du manager
+
+
+## Docker registry
+https://docs.docker.com/engine/swarm/stack-deploy/#set-up-a-docker-registry
+
+# Create the registry
+docker service create --name registry --publish published=5000,target=5000 registry:2 
+
+
+## Swarmprom
+
+
+## Q1
+bind du socket docker
+`-v /var/run/docker.sock:/var/run/docker.sock`
+
+## Q2
+Un DFS est un système de fichiers distribués permettant de :
+*  fournir une arborescence logique aux données partagées depuis des emplacements différents
+* rassembler différents partages de fichiers à un endroit unique de façon transparente
+* d’assurer la redondance et la disponibilité des données grâce à la réplication
+
+## Q3
+Pour notre solution d'automatisation de déploiement CEPH : cf `/scripts/ceph.sh`
+
+## Q4
+
+
+## Q5
+
+
+## Q6
