@@ -156,71 +156,34 @@ L'argument `--publish` permet de publier des ports de services pour les rendre a
 
 ### Question 6
 Permet d'utiliser la stack network du Docker host
-`--cap-add=NET_ADMIN' : donne un accès au contrôle de la couche réseau de l'hôte, gérée par le kernel 
+`--cap-add=NET_ADMIN'` : donne un accès au contrôle de la couche réseau de l'hôte, gérée par le kernel 
+
 ```
+core@core-201 ~ $ docker ps
+
+CONTAINER ID        IMAGE                     COMMAND                 CREATED             STATUS              PORTS               NAMES
+529a7d1a93e1        osixia/keepalived:1.3.5   "/container/tool/run"   24 minutes ago      Up 20 seconds                           keepalived
+
 core@core-201 ~ $ docker inspect 5 | grep -i pid
-            "Pid": 1644,
+            "Pid": 1093,
             "PidMode": "",
             "PidsLimit": 0,
             
-core@core-201 ~ $ sudo nsenter -t 1644 -n /bin/bash                                              
 
-core-201 core # ls -al /proc/1644
-total 0
-dr-xr-xr-x.  9 root root 0 Nov 18 20:05 .
-dr-xr-xr-x. 94 root root 0 Nov 18 19:54 ..
-dr-xr-xr-x.  2 root root 0 Nov 18 20:15 attr
--rw-r--r--.  1 root root 0 Nov 18 20:15 autogroup
--r--------.  1 root root 0 Nov 18 20:15 auxv
--r--r--r--.  1 root root 0 Nov 18 20:15 cgroup
---w-------.  1 root root 0 Nov 18 20:15 clear_refs
--r--r--r--.  1 root root 0 Nov 18 20:15 cmdline
--rw-r--r--.  1 root root 0 Nov 18 20:15 comm
--rw-r--r--.  1 root root 0 Nov 18 20:15 coredump_filter
--r--r--r--.  1 root root 0 Nov 18 20:15 cpuset
-lrwxrwxrwx.  1 root root 0 Nov 18 20:15 cwd -> /
--r--------.  1 root root 0 Nov 18 20:15 environ
-lrwxrwxrwx.  1 root root 0 Nov 18 20:15 exe -> /usr/bin/python2.7
-dr-x------.  2 root root 0 Nov 18 20:15 fd
-dr-x------.  2 root root 0 Nov 18 20:15 fdinfo
--rw-r--r--.  1 root root 0 Nov 18 20:15 gid_map
--r--------.  1 root root 0 Nov 18 20:15 io
--r--r--r--.  1 root root 0 Nov 18 20:15 latency
--r--r--r--.  1 root root 0 Nov 18 20:15 limits
--rw-r--r--.  1 root root 0 Nov 18 20:15 loginuid
-dr-x------.  2 root root 0 Nov 18 20:15 map_files
--r--r--r--.  1 root root 0 Nov 18 20:15 maps
--rw-------.  1 root root 0 Nov 18 20:15 mem
--r--r--r--.  1 root root 0 Nov 18 20:15 mountinfo
--r--r--r--.  1 root root 0 Nov 18 20:15 mounts
--r--------.  1 root root 0 Nov 18 20:15 mountstats
-dr-xr-xr-x.  5 root root 0 Nov 18 20:15 net
-dr-x--x--x.  2 root root 0 Nov 18 20:05 ns
--r--r--r--.  1 root root 0 Nov 18 20:15 numa_maps
--rw-r--r--.  1 root root 0 Nov 18 20:15 oom_adj
--r--r--r--.  1 root root 0 Nov 18 20:15 oom_score
--rw-r--r--.  1 root root 0 Nov 18 20:15 oom_score_adj
--r--------.  1 root root 0 Nov 18 20:15 pagemap
--r--------.  1 root root 0 Nov 18 20:15 personality
--rw-r--r--.  1 root root 0 Nov 18 20:15 projid_map
-lrwxrwxrwx.  1 root root 0 Nov 18 20:15 root -> /
--rw-r--r--.  1 root root 0 Nov 18 20:15 sched
--r--r--r--.  1 root root 0 Nov 18 20:15 schedstat
--r--r--r--.  1 root root 0 Nov 18 20:15 sessionid
--rw-r--r--.  1 root root 0 Nov 18 20:15 setgroups
--r--r--r--.  1 root root 0 Nov 18 20:15 smaps
--r--r--r--.  1 root root 0 Nov 18 20:15 smaps_rollup
--r--------.  1 root root 0 Nov 18 20:15 stack
--r--r--r--.  1 root root 0 Nov 18 20:05 stat
--r--r--r--.  1 root root 0 Nov 18 20:15 statm
--r--r--r--.  1 root root 0 Nov 18 20:15 status
--r--------.  1 root root 0 Nov 18 20:15 syscall
-dr-xr-xr-x.  3 root root 0 Nov 18 20:15 task
--r--r--r--.  1 root root 0 Nov 18 20:15 timers
--rw-rw-rw-.  1 root root 0 Nov 18 20:15 timerslack_ns
--rw-r--r--.  1 root root 0 Nov 18 20:15 uid_map
--r--r--r--.  1 root root 0 Nov 18 20:15 wchan
+core@core-201 ~ $ sudo nsenter -t 1093 -n /bin/sh
+
+sh-4.3# ip a | grep inet
+    inet 127.0.0.1/8 scope host lo
+    inet6 ::1/128 scope host
+    inet 10.0.2.15/24 brd 10.0.2.255 scope global dynamic eth0
+    inet 192.168.4.100/32 scope global eth0
+    inet6 fe80::a00:27ff:fe24:4334/64 scope link
+    inet 192.168.4.201/24 brd 192.168.4.255 scope global eth1
+    inet6 fe80::a00:27ff:fed7:28a9/64 scope link
+    inet 172.18.0.1/16 brd 172.18.255.255 scope global docker_gwbridge
+    inet 172.17.0.1/16 brd 172.17.255.255 scope global docker0
 ```
+On retrouve bien l'adresse réseau de notre hôte, ici présente dans le conteneur. Keepalived en a besoin pour pouvoir utiliser dynamiquement cette adresse comme une des passerelles par défaut reliée à l'IP virtuelle
 
 ### Question 7
 **Principe de priorité de Keepalived**: Cette priorité est le paramètre qui va permettre le choix d'un routeur master pour le groupe VRRP. Le routeur du groupe ayant la priorité la plus haute est choisi comme master. En cas d'égalité, le routeur ayant l'adresse IP la plus élevée est choisi.  
