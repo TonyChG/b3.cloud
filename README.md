@@ -3,8 +3,7 @@
 > Groupe: Antoine CHINY - Benjamin GIRALT
 
 ## Network used
-*All of the machines use /24 as the subnet mask*
-| Machine/Hostname | Address   | Machine Used  |
+| Machine/Hostname | Address   | Host Machine Used  |
 | ------------- |:-------------:| -----:|
 | Antoine Host | 192.168.4.2  | Antoine |
 | Benjamin Host | 192.168.4.3  | Benjamin |
@@ -19,6 +18,7 @@
 | core-204 | 192.168.4.204  | Benjamin |
 | core-205 | 192.168.4.205  | Benjamin |
 
+*Note : All of the machines use /24 as the subnet mask*
 
 ## Requirements
 - `git`
