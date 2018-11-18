@@ -108,8 +108,6 @@ docker stack deploy -c /data/app-repo/traefik/docker-compose.yml traefik
 docker stack deploy -c /data/app-repo/registry/docker-compose.yml registry
 ```
 
-[![demo](https://asciinema.dotfile.eu/a/21?autoplay=1)](https://asciinema.dotfile.eu/a/21?autoplay=1)
-
 # Questions
 ### Question 1
 bind du socket docker
