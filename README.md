@@ -141,6 +141,70 @@ L'argument `--publish` permet de publier des ports de services pour les rendre a
 ### Question 6
 Permet d'utiliser la stack network du Docker host
 `--cap-add=NET_ADMIN' : donne un accès au contrôle de la couche réseau de l'hôte, gérée par le kernel 
+```
+core@core-201 ~ $ docker inspect 5 | grep -i pid
+            "Pid": 1644,
+            "PidMode": "",
+            "PidsLimit": 0,
+            
+core@core-201 ~ $ sudo nsenter -t 1644 -n /bin/bash                                              
+
+core-201 core # ls -al /proc/1644
+total 0
+dr-xr-xr-x.  9 root root 0 Nov 18 20:05 .
+dr-xr-xr-x. 94 root root 0 Nov 18 19:54 ..
+dr-xr-xr-x.  2 root root 0 Nov 18 20:15 attr
+-rw-r--r--.  1 root root 0 Nov 18 20:15 autogroup
+-r--------.  1 root root 0 Nov 18 20:15 auxv
+-r--r--r--.  1 root root 0 Nov 18 20:15 cgroup
+--w-------.  1 root root 0 Nov 18 20:15 clear_refs
+-r--r--r--.  1 root root 0 Nov 18 20:15 cmdline
+-rw-r--r--.  1 root root 0 Nov 18 20:15 comm
+-rw-r--r--.  1 root root 0 Nov 18 20:15 coredump_filter
+-r--r--r--.  1 root root 0 Nov 18 20:15 cpuset
+lrwxrwxrwx.  1 root root 0 Nov 18 20:15 cwd -> /
+-r--------.  1 root root 0 Nov 18 20:15 environ
+lrwxrwxrwx.  1 root root 0 Nov 18 20:15 exe -> /usr/bin/python2.7
+dr-x------.  2 root root 0 Nov 18 20:15 fd
+dr-x------.  2 root root 0 Nov 18 20:15 fdinfo
+-rw-r--r--.  1 root root 0 Nov 18 20:15 gid_map
+-r--------.  1 root root 0 Nov 18 20:15 io
+-r--r--r--.  1 root root 0 Nov 18 20:15 latency
+-r--r--r--.  1 root root 0 Nov 18 20:15 limits
+-rw-r--r--.  1 root root 0 Nov 18 20:15 loginuid
+dr-x------.  2 root root 0 Nov 18 20:15 map_files
+-r--r--r--.  1 root root 0 Nov 18 20:15 maps
+-rw-------.  1 root root 0 Nov 18 20:15 mem
+-r--r--r--.  1 root root 0 Nov 18 20:15 mountinfo
+-r--r--r--.  1 root root 0 Nov 18 20:15 mounts
+-r--------.  1 root root 0 Nov 18 20:15 mountstats
+dr-xr-xr-x.  5 root root 0 Nov 18 20:15 net
+dr-x--x--x.  2 root root 0 Nov 18 20:05 ns
+-r--r--r--.  1 root root 0 Nov 18 20:15 numa_maps
+-rw-r--r--.  1 root root 0 Nov 18 20:15 oom_adj
+-r--r--r--.  1 root root 0 Nov 18 20:15 oom_score
+-rw-r--r--.  1 root root 0 Nov 18 20:15 oom_score_adj
+-r--------.  1 root root 0 Nov 18 20:15 pagemap
+-r--------.  1 root root 0 Nov 18 20:15 personality
+-rw-r--r--.  1 root root 0 Nov 18 20:15 projid_map
+lrwxrwxrwx.  1 root root 0 Nov 18 20:15 root -> /
+-rw-r--r--.  1 root root 0 Nov 18 20:15 sched
+-r--r--r--.  1 root root 0 Nov 18 20:15 schedstat
+-r--r--r--.  1 root root 0 Nov 18 20:15 sessionid
+-rw-r--r--.  1 root root 0 Nov 18 20:15 setgroups
+-r--r--r--.  1 root root 0 Nov 18 20:15 smaps
+-r--r--r--.  1 root root 0 Nov 18 20:15 smaps_rollup
+-r--------.  1 root root 0 Nov 18 20:15 stack
+-r--r--r--.  1 root root 0 Nov 18 20:05 stat
+-r--r--r--.  1 root root 0 Nov 18 20:15 statm
+-r--r--r--.  1 root root 0 Nov 18 20:15 status
+-r--------.  1 root root 0 Nov 18 20:15 syscall
+dr-xr-xr-x.  3 root root 0 Nov 18 20:15 task
+-r--r--r--.  1 root root 0 Nov 18 20:15 timers
+-rw-rw-rw-.  1 root root 0 Nov 18 20:15 timerslack_ns
+-rw-r--r--.  1 root root 0 Nov 18 20:15 uid_map
+-r--r--r--.  1 root root 0 Nov 18 20:15 wchan
+```
 
 ### Question 7
 **Principe de priorité de Keepalived**: Cette priorité est le paramètre qui va permettre le choix d'un routeur master pour le groupe VRRP. Le routeur du groupe ayant la priorité la plus haute est choisi comme master. En cas d'égalité, le routeur ayant l'adresse IP la plus élevée est choisi.  
