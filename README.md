@@ -174,3 +174,22 @@ Reverse proxy bind sur le Docker socket, qui lit des labels sur les conteneurs q
 
 
 # Metrics
+*Note : certains screenshots ont été pris quand le cluster de 10 machines était opérationnel, d'autres quand il y avait seulement 5 machines : d'où la différence de certaines données.*
+
+### Grafana
+![grafana docker nodes](https://github.com/TonyChG/b3.cloud/blob/dev/resources/graffana_docker_nodes.png)
+![grafana prometheus](https://github.com/TonyChG/b3.cloud/blob/dev/resources/graffana_prometheus.png)
+![grafana swarm 1](https://github.com/TonyChG/b3.cloud/blob/dev/resources/graffana_swarm1.png)
+![grafana swarm 2](https://github.com/TonyChG/b3.cloud/blob/dev/resources/graffana_swarm2.png)
+![grafana swarm 3](https://github.com/TonyChG/b3.cloud/blob/dev/resources/graffana_swarm3.png)
+![grafana swarm 4](https://github.com/TonyChG/b3.cloud/blob/dev/resources/graffana_swarm4.png)
+
+### Traefik
+![traefik](https://github.com/TonyChG/b3.cloud/blob/dev/resources/traeffik.png)
+
+### Weave
+![weave containers](https://github.com/TonyChG/b3.cloud/blob/dev/resources/weave_containers.png)
+![weave nodes](https://github.com/TonyChG/b3.cloud/blob/dev/resources/weave_nodes.png)
+![weave services](https://github.com/TonyChG/b3.cloud/blob/dev/resources/weave_services.png)
+![weave hosts](https://github.com/TonyChG/b3.cloud/blob/dev/resources/weave_hosts.png)
+
