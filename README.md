@@ -47,6 +47,7 @@ docker save osixia/keepalived:1.3.5 -o data/images/keepalived.tar.gz
 
 ## Usage
 
+Configure the Vagrantfile
 ```
 vim Vagrantfile
 # >>> Vagrantfile
@@ -55,7 +56,10 @@ vim Vagrantfile
 # 125       config.vm.network "private_network", ip: ip
 # 126       # This tells Ignition what the IP for eth1 (the host-only adapter) should be
 # 127       config.ignition.ip = ip
+```
 
+Start the test infra
+```
 # Starting vagrant machines
 cd coreos-vagrant
 vagrant up
@@ -87,18 +91,28 @@ bash scripts/ceph.sh --mds
 
 # Mount ceph partition
 bash scripts/ceph.sh --configure
+```
 
-# To deploy swarm
+[![asciicast](https://asciinema.org/a/212494.svg)](https://asciinema.org/a/212494?autoplay=1)
+
+```
+# To deploy the swarm
 bash scripts/swarminit.sh
 ```
-[![asciicast](https://asciinema.org/a/212494.svg)](https://asciinema.org/a/212494?autoplay=1)
+
+[![asciicast](https://asciinema.org/a/212495.svg)](https://asciinema.org/a/212495)
+
 ```
 # Ajouter un node ceph
 bash scripts/add_node.sh --ip=<node ip> --keyring
 bash scripts/add_node.sh --ip=<node ip> --osd
 bash scripts/add_node.sh --ip=<node ip> --mds
 bash scripts/add_node.sh --ip=<node ip> --configure
+```
 
+[![asciicast](https://asciinema.org/a/212496.svg)](https://asciinema.org/a/212496)
+
+```
 # Copy repository to core nodes
 cd b3.cloud
 ssh-add $HOME/.vagrant.d/insecure_private_key
