@@ -32,6 +32,14 @@ gem build vagrant-ignition.gemspec
 vagrant plugin install vagrant-ignition-0.0.3.gem
 ```
 
+Clone vagrant coreos repository in the project
+```
+git clone https://github.com/TonyChG/b3.cloud
+cd b3.cloud
+git clone https://github.com/coreos/coreos-vagrant.git
+```
+
+
 Push keepalived and ceph/daemon images to all nodes on provisioning
 ```
 # on your host
