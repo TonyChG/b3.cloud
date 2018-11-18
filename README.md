@@ -1,5 +1,5 @@
 # TP1 - Cloud
-> Formateur: Léo GODEFROY
+> Formateur: Léo GODEFROY\
 > Groupe: Antoine CHINY - Benjamin GIRALT
 
 ## Network used
@@ -132,12 +132,13 @@ docker stack deploy -c /data/app-repo/registry/docker-compose.yml registry
 ### Déployer un service sur le swarm
 (En reprenant l'exemple de swarmprom)\
 Déployer une stack sur le swarm
-`docker stack deploy -c docker-compose.yml <nom stack>`
+```
+docker stack deploy -c docker-compose.yml <nom stack>
+```
 
 Permettre le monitoring du service
 ```
-bind le socket docker avec un token d'api
-- /var/run/docker.sock:/var/run/docker.sock:ro
+
 ```
 Sauvegarder le service
 ```
