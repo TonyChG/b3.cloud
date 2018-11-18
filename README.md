@@ -138,11 +138,7 @@ docker stack deploy -c docker-compose.yml <nom stack>
 
 Permettre le monitoring du service
 ```
-
-```
-Sauvegarder le service
-```
-
+Utiliser le mode expérimental de Docker (config du daemon)
 ```
 
 Assurer la HA 
@@ -153,7 +149,7 @@ replicas: <nombre de répliques>
 ```
 Assurer le HTTPS
 ```
-dans traefik
+mettre les labels dans traefik:
 ```
 
 # Questions
