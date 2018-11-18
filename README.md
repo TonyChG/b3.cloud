@@ -168,8 +168,7 @@ core@core-201 ~ $ docker inspect 5 | grep -i pid
             "Pid": 1093,
             "PidMode": "",
             "PidsLimit": 0,
-            
-
+           
 core@core-201 ~ $ sudo nsenter -t 1093 -n /bin/sh
 
 sh-4.3# ip a | grep inet
