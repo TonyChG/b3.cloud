@@ -129,6 +129,29 @@ docker stack deploy -c /data/app-repo/traefik/docker-compose.yml traefik
 docker stack deploy -c /data/app-repo/registry/docker-compose.yml registry
 ```
 
+### Déployer un service sur le swarm
+(En reprenant l'exemple de swarmprom)\
+Déployer une stack sur le swarm
+`docker stack deploy -c docker-compose.yml <nom stack>`
+
+Permettre le monitoring du service
+```
+```
+Sauvegarder le service
+```
+```
+
+Assurer la HA 
+```
+dans le docker compose : 
+mode: replicated
+replicas: <nombre de répliques>
+```
+Assurer le HTTPS
+```
+dans traefik
+```
+
 # Questions
 ### Question 1
 bind du socket docker
