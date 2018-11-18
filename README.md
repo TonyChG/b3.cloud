@@ -60,6 +60,9 @@ vim Vagrantfile
 cd coreos-vagrant
 vagrant up
 
+# Test conection
+telnet 192.168.4.101 22
+
 # To deploy ceph cluster
 vim scripts/hosts
 # After editing the ceph config file
@@ -87,7 +90,9 @@ bash scripts/ceph.sh --configure
 
 # To deploy swarm
 bash scripts/swarminit.sh
-
+```
+[![asciicast](https://asciinema.org/a/212494.svg)](https://asciinema.org/a/212494)
+```
 # Ajouter un node ceph
 bash scripts/add_node.sh --ip=<node ip> --keyring
 bash scripts/add_node.sh --ip=<node ip> --osd
