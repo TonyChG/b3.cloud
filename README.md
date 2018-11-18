@@ -91,7 +91,7 @@ bash scripts/ceph.sh --configure
 # To deploy swarm
 bash scripts/swarminit.sh
 ```
-[![asciicast](https://asciinema.org/a/212494.svg)](https://asciinema.org/a/212494)
+[![asciicast](https://asciinema.org/a/212494.svg)](https://asciinema.org/a/212494?autoplay=1)
 ```
 # Ajouter un node ceph
 bash scripts/add_node.sh --ip=<node ip> --keyring
