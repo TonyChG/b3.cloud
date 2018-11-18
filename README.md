@@ -191,5 +191,5 @@ Reverse proxy bind sur le Docker socket, qui lit des labels sur les conteneurs q
 ![weave containers](https://github.com/TonyChG/b3.cloud/blob/dev/resources/weave_containers.png)
 ![weave nodes](https://github.com/TonyChG/b3.cloud/blob/dev/resources/weave_nodes.png)
 ![weave services](https://github.com/TonyChG/b3.cloud/blob/dev/resources/weave_services.png)
-![weave hosts](https://github.com/TonyChG/b3.cloud/blob/dev/resources/weave_hosts.png)
+![weave hosts](https://github.com/TonyChG/b3.cloud/blob/dev/resources/weaves_hosts.png)
 
