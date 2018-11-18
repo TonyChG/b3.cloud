@@ -29,8 +29,8 @@ $instance_name_prefix = "core"
 $enable_serial_logging = false
 $share_home = false
 $vm_gui = false
-$vm_memory = 1024
-$vm_cpus = 1
+$vm_memory = 1648
+$vm_cpus = 2
 $vb_cpuexecutioncap = 100
 $shared_folders = {}
 $forwarded_ports = {}
@@ -121,8 +121,12 @@ Vagrant.configure("2") do |config|
       end
 
       ip = "192.168.4.#{i+100}"
-      # config.vm.network "public_network", ip: ip, bridge: "enp1s31f6"
+      # config.vm.network "public_network", ip: ip, bridge: "enp0s31f6"
       config.vm.network "private_network", ip: ip
+
+      # /home/core/share - nfs infradev
+      config.vm.synced_folder "../data", "/home/core/share", id: "core", :nfs => true,  :mount_options   => ['nolock,vers=3,udp']
+      config.vm.provision "docker_images", type: "shell", :path => "../scripts/loadimages.sh", run: "once"
       # This tells Ignition what the IP for eth1 (the host-only adapter) should be
       config.ignition.ip = ip
 
