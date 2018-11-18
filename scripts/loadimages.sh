@@ -10,10 +10,7 @@
 # 11/18/18    tonychg
 # =============================================================================
 
-docker_images=( \
-/home/core/share/images/keepalived.tar.gz \
-/home/core/share/images/ceph_daemon.tar.gz \
-)
+docker_images=$(find /home/core/share/images -type f -name "*.tar.gz")
 
 for i in ${docker_images[@]}; do
     echo "Load $i"

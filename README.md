@@ -14,16 +14,17 @@ gem build vagrant-ignition.gemspec
 vagrant plugin install vagrant-ignition-0.0.3.gem
 ```
 
-* Create the coreos base box with required images
+Push keepalived and ceph/daemon images to all nodes on provisioning
 ```
-# Clone this repo
+# on your host
 cd b3.cloud
-git clone https://github.com/coreos/coreos-vagrant
-cp Vagrantfile coreos-vagrant/Vagrantfile
-
-# Update the network configuration
-# Second disk size
-vim coreos-vagrant/Vagrantfile
+docker pull ceph/daemon
+docker pull osixia/keepalived:1.3.5
+docker save ceph/daemon -o data/images/ceph_daemon.tar.gz
+docker save osixia/keepalived:1.3.5 -o data/images/keepalived.tar.gz
+# You can save all images you want in data/images
+# They will be automatically sync to all node on vagrant provisioning
+# Usefull: on low internet conection
 ```
 
 ## Usage
@@ -68,6 +69,12 @@ bash scripts/ceph.sh --configure
 
 # To deploy swarm
 bash scripts/swarminit.sh
+
+# Ajouter un node ceph
+bash scripts/add_node.sh --ip=<node ip> --keyring
+bash scripts/add_node.sh --ip=<node ip> --osd
+bash scripts/add_node.sh --ip=<node ip> --mds
+bash scripts/add_node.sh --ip=<node ip> --configure
 
 # Copy repository to core nodes
 cd b3.cloud
