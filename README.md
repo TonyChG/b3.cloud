@@ -136,9 +136,12 @@ Déployer une stack sur le swarm
 
 Permettre le monitoring du service
 ```
+bind le socket docker avec un token d'api
+- /var/run/docker.sock:/var/run/docker.sock:ro
 ```
 Sauvegarder le service
 ```
+
 ```
 
 Assurer la HA 
