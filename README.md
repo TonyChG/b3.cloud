@@ -1,6 +1,6 @@
 # TP1 - Cloud
 > Formateur: Léo GODEFROY\
-> Groupe: Antoine CHINY - Benjamin GIRALT
+> Groupe: Antoine CHINY - Benjamin GIRALT - Julien DAULIAC
 
 ## Network used
 | Machine/Hostname | Address   | Host Machine Used  |
